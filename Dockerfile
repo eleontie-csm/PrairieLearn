@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.7-labs
 # check=skip=CopyIgnoredFile
 # TODO: remove once the following issue is fixed:
 # https://github.com/moby/buildkit/issues/6512

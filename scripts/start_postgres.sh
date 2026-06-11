@@ -32,7 +32,15 @@ fi
 
 # Only locally start postgres if we weren't given a PGHOST environment variable
 if [[ -z "$PGHOST" ]]; then
-    su postgres -c "pg_ctl --silent --log=${PGDATA}/postgresql.log ${ACTION}"
+    if ! su postgres -c "pg_ctl --silent --log=${PGDATA}/postgresql.log ${ACTION}"; then
+        # `pg_ctl start` can fail with "another server might be running" while
+        # postgres is already available; treat that case as success.
+        if [[ "$ACTION" == "start" ]] && pg_isready -q; then
+            :
+        else
+            exit 1
+        fi
+    fi
 fi
 
 if [[ "$ACTION" == "start" ]]; then
